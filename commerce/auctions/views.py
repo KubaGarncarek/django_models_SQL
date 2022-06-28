@@ -14,17 +14,63 @@ def index(request):
 
 def create_listing(request):
     if request.method == "POST":
-        new_listing = Listings(title = request.POST['title'], description = request.POST['description'], starting_bid = request.POST['starting_bid'])
+        user = request.user
+        new_listing = Listings(title = request.POST['title'], description = request.POST['description'], bid = request.POST['starting_bid'], photo = request.POST['image'], highest_bidder = user.id, active=True)
         new_listing.save()
+        
+        user.listing_owner.add(new_listing)
+        user.save()
         return HttpResponseRedirect(reverse("index"))
         
     return render(request, "auctions/create_listing.html")
 
 def listing_page(request, listing_id):
-    listing = Listings.objects.get(id=listing_id)
+    listing = Listings.objects.get(pk=listing_id)
+    interested_users = listing.interested_users.all()
+    listing_owner = listing.owner.all()
+    
     return render(request, "auctions/listing_page.html", {
         "listing" : listing,
+        "interested_users" : interested_users,
+        "listing_owner" : listing_owner
     })
+
+def watchlist(request, listing_id):
+    listing = Listings.objects.get(pk=listing_id)
+    user = request.user
+    if request.user in listing.interested_users.all():
+        user.watchlist.remove(listing)
+    else:
+        user.watchlist.add(listing)
+    return HttpResponseRedirect(reverse("listing_page", args=(listing_id,)))
+    
+
+def bidding(request, listing_id):
+    listing = Listings.objects.get(pk=listing_id)
+    user_bid = int(request.POST['bid'])
+    if not user_bid > listing.bid:
+        return render(request, "auctions/listing_page.html", {
+            "listing": listing,
+            "message": "must provide bid higher than actually bid"  
+        })
+    listing.bid = user_bid
+    listing.highest_bidder = request.user.id
+    print(listing.highest_bidder)
+    listing.save()
+    
+
+
+    return HttpResponseRedirect(reverse("listing_page", args=(listing_id,)))
+    
+    
+def close_listing(request, listing_id):
+    listing = Listings.objects.get(pk=listing_id)
+    listing.active = False
+    listing.save()
+    return HttpResponseRedirect(reverse("listing_page", args=(listing_id,)))
+
+
+
 
 
 

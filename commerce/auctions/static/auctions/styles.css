@@ -1,4 +1,37 @@
 body {
     padding: 10px;
-    background-color: black;
+    
+}
+
+.listing {
+    height: 150px;
+    border: 1px solid grey;
+    margin-bottom: 10px;
+    
+}
+
+#photo {
+    width: 30%;
+
+    
+}
+
+.info{
+    width:50%;
+    height: 100%;
+    display: inline-block;
+    
+}
+.title {
+    margin: px;
+    font-size: 20px;
+}
+
+#description {
+    font-size:13px;
+}
+
+#image {
+    height:90%;
+    margin-left: 30px;
 }

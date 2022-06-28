@@ -2,17 +2,62 @@
 
 {% block body %}
 
-<div>
-    {{listing.title}}
-</div>
-<div>
-    {{listing.description}}
-</div>
-<div>
-    {{listing.starting_bid}}
-</div>
-<div>
-    <input type="submit">
-</div>
     
+    <div>
+       <h2>title</h2> 
+       {{listing.title}}
+    </div>
+    <div>
+        <h2>description</h2>
+        {{listing.description}}
+    </div>
+    <div>
+        <h2>listing bid</h2>
+        {{listing.bid}}
+    </div>
+    <div>
+        <h2>listing owner </h2>
+        {{listing_owner}}
+    </div>
+    <div>
+        <h2>interested people</h2>
+        {{interested_users}}
+    </div>
+
+    {% if user.is_authenticated %}
+    <form action="{% url 'watchlist' listing.id %}" method="post">
+        {% csrf_token %} 
+        {%if user in interested_users %}
+        <div>
+            <input type="submit" value="delete from watchlist">
+        </div>
+        {% else %}
+        <div>
+            <input type="submit" value="add to watchlist">
+        </div>
+        {% endif %}
+        </form>
+        <div>
+            <form action="{% url 'bidding' listing.id %}" method="post">
+                {% csrf_token %} 
+                <input type="number" placeholder="entry bid" name="bid">
+                <input type="submit" value="bid listing">
+            </form>
+        </div>
+        
+        <div>
+            {% if request.user in listing_owner and listing.active %}
+                <form action="{% url 'close_listing' listing.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="submit" value="close listing">
+                </form>
+            {% endif %}
+        </div>
+
+        {% if message %}
+            {{message}}
+        {% endif %}
+    {% endif %}
+    
+
 {% endblock %}
