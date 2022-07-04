@@ -17,13 +17,14 @@ body {
 }
 
 .info{
-    width:50%;
+    width: 49%;
     height: 100%;
     display: inline-block;
     
+    
 }
 .title {
-    margin: px;
+    
     font-size: 20px;
 }
 
@@ -32,6 +33,17 @@ body {
 }
 
 #image {
-    height:90%;
+    height:70%;
     margin-left: 30px;
+}
+
+#div{
+    margin-top: 30px;
+    height: 300px;
+    display: block;
+}
+
+#image2 {
+    margin: 10px;
+    width: 50%;
 }

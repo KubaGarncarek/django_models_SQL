@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Listings
+from .models import User, Listings, Comments, Categories
 
 
 def index(request):
@@ -13,26 +13,37 @@ def index(request):
     })
 
 def create_listing(request):
+    categories = Categories.objects.all()
     if request.method == "POST":
         user = request.user
-        new_listing = Listings(title = request.POST['title'], description = request.POST['description'], bid = request.POST['starting_bid'], photo = request.POST['image'], highest_bidder = user.id, active=True)
+        new_listing = Listings(title = request.POST['title'], description = request.POST['description'], bid = request.POST['starting_bid'], photo = request.POST['image'], highest_bidder = user.id, active=True,)
         new_listing.save()
-        
         user.listing_owner.add(new_listing)
         user.save()
+        category = request.POST['category']
+        categories = Categories.objects.get(name = category)
+        categories.listings.add(new_listing)
+        categories.save()
+        
+
         return HttpResponseRedirect(reverse("index"))
         
-    return render(request, "auctions/create_listing.html")
+    return render(request, "auctions/create_listing.html", {
+        "categories": categories
+    })
 
 def listing_page(request, listing_id):
     listing = Listings.objects.get(pk=listing_id)
     interested_users = listing.interested_users.all()
     listing_owner = listing.owner.all()
-    
+    comments = listing.comments.all()
+    category = listing.category.all()
     return render(request, "auctions/listing_page.html", {
         "listing" : listing,
         "interested_users" : interested_users,
-        "listing_owner" : listing_owner
+        "listing_owner" : listing_owner,
+        "comments" : comments,
+        "category" : category
     })
 
 def watchlist(request, listing_id):
@@ -61,7 +72,15 @@ def bidding(request, listing_id):
 
 
     return HttpResponseRedirect(reverse("listing_page", args=(listing_id,)))
-    
+
+def comment(request,listing_id):
+    listing = Listings.objects.get(pk=listing_id)
+    content = request.POST['comment']
+    comment = Comments (content= content, listing = listing, owner= request.user    )
+    comment.save()
+    return HttpResponseRedirect(reverse("listing_page", args=(listing_id,)))
+
+
     
 def close_listing(request, listing_id):
     listing = Listings.objects.get(pk=listing_id)
@@ -69,6 +88,13 @@ def close_listing(request, listing_id):
     listing.save()
     return HttpResponseRedirect(reverse("listing_page", args=(listing_id,)))
 
+def watchlist_page(request):
+    user = request.user
+    watchlist = user.watchlist.all()
+    print(watchlist)
+    return render(request, "auctions/watchlist.html", {
+        "listings" : watchlist,
+    })
 
 
 
