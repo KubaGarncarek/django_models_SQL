@@ -14,6 +14,8 @@ urlpatterns = [
     path("bidding/<int:listing_id>", views.bidding, name="bidding"),
     path("close_listing/<int:listing_id>", views.close_listing, name="close_listing"),
     path("comment/<int:listing_id>", views.comment, name="comment"),
-    path("watchlist_page", views.watchlist_page, name="watchlist_page")
+    path("watchlist_page", views.watchlist_page, name="watchlist_page"),
+    path("categories", views.categories, name="categories"),
+    path("listings_from_category/<int:category_id>", views.listings_from_category, name="listings_from_category"),
 ]  
 urlpatterns += staticfiles_urlpatterns()

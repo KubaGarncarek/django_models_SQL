@@ -9,8 +9,21 @@ from .models import User, Listings, Comments, Categories
 
 def index(request):
     return render(request, "auctions/index.html", {
-        "listings" : Listings.objects.all()
+        "listings" : Listings.objects.filter(active=True).order_by("-pk")
     })
+
+def categories(request):
+    return render(request, "auctions/categories.html", {
+        "categories" : Categories.objects.all()
+    })
+
+def listings_from_category(request, category_id):
+    return render(request, "auctions/index.html", {
+        "listings" : Listings.objects.filter(active=True, category = category_id)
+    })
+    
+
+
 
 def create_listing(request):
     categories = Categories.objects.all()
@@ -66,7 +79,6 @@ def bidding(request, listing_id):
         })
     listing.bid = user_bid
     listing.highest_bidder = request.user.id
-    print(listing.highest_bidder)
     listing.save()
     
 
@@ -91,17 +103,9 @@ def close_listing(request, listing_id):
 def watchlist_page(request):
     user = request.user
     watchlist = user.watchlist.all()
-    print(watchlist)
     return render(request, "auctions/watchlist.html", {
         "listings" : watchlist,
     })
-
-
-
-
-
-
-
 
 
 def login_view(request):

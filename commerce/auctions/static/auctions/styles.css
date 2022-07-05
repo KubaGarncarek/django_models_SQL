@@ -15,14 +15,26 @@ body {
 
     
 }
+.info2 {
+    width: 60%;
+    display: inline-block;
+}
+    
+
 
 .info{
     width: 49%;
     height: 100%;
     display: inline-block;
-    
-    
+        
 }
+
+#cont {
+    margin-right:0px;
+    margin-left: 0px;
+    max-width: 100%;
+}
+
 .title {
     
     font-size: 20px;
@@ -44,6 +56,10 @@ body {
 }
 
 #image2 {
-    margin: 10px;
-    width: 50%;
+    margin: 40px;
+    width: 80%;
+}
+
+.desc {
+    margin:60px;
 }

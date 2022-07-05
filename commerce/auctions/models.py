@@ -10,14 +10,16 @@ class Listings(models.Model):
     highest_bidder = models.IntegerField()
     active = models.BooleanField()
     
+    def __str__(self):
+        return self.title
 
-    # TODO 
-    # adding images and category
-    # image = models.ImageField
 
 class User(AbstractUser):
     watchlist = models.ManyToManyField(Listings, blank = True, related_name="interested_users")
     listing_owner = models.ManyToManyField(Listings, blank = True, related_name="owner")
+
+    def __str__(self):
+        return self.username
 
 class Comments(models.Model):
     content = models.CharField(max_length= 128)
@@ -27,3 +29,6 @@ class Comments(models.Model):
 class Categories(models.Model):
     name = models.CharField(max_length=20)
     listings = models.ManyToManyField(Listings, blank = True, null=True, related_name="category")
+
+    def __str__(self):
+        return self.name
